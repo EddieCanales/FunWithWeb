@@ -52,7 +52,7 @@
 
     <div class="container">
 
-      <h1>Layers Test</h1>
+      <h1>Layer Depth Test</h1>
       <p>This is a test of my layers concept.</p>
 	<form id="add-form">
 		<label>color:</label><input type="text" id="test-input-color" />
@@ -84,6 +84,7 @@
 		var getLayer= function(depth) {
 			var layer_id= 'layer-'+depth;
 			if(!$('#'+layer_id).length) {
+				//create the layer if it doesn't exist
 				var zIndex= -1*depth;
 				minZindex= Math.min(zIndex,minZindex);
 				$('#layers').css({'z-index':minZindex-1}).append(
@@ -96,10 +97,15 @@
 			return $('#'+layer_id);
 		};
 		var addToLayer= function(content, depth, x, y) {
-			//create the layer if it doesn't exist
-			var layer= getLayer(depth);
-			console.log(layer);
-			//getLayer(depth).append('<div>test</div>');
+			var orig_w= content.width();
+			var orig_h= content.height();
+			var focal_length= 1;
+			//TODO: apply perspective
+			//content.width((1/depth)*orig_w);
+			//content.height((1/depth)*orig_h);
+			x= x + (orig_w - content.width())/2;
+			y= y + (orig_h - content.height())/2;
+
 			getLayer(depth).append(
 				$('<div>').css(
 					{position:'absolute',top:y+"px",left:x+"px"}
