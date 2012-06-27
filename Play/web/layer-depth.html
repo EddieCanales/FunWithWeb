@@ -27,6 +27,15 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png"-->
+
+	<style>
+		#add-form { /* turn off add form - replaced by generate scene */
+			display:none;
+		}
+		#use-orientation {
+			float:left;
+		}
+	</style>
   </head>
 
   <body>
@@ -55,16 +64,26 @@
       <h1>Layer Depth Test</h1>
       <p>This is a test of my layers concept.</p>
 	<form id="add-form">
-		<label>color:</label><input type="text" id="test-input-color" />
-		<label>layer:</label><input type="text" id="test-input-layer" />
+		<label>color:</label><input type="text" id="test-input-color" value="bubble" />
+		<label>layer (integer):</label><input type="text" id="test-input-layer" value="10" />
+		<br/>
 		<input type="submit" value="add" />
 	</form>
-	<form id="eye-form">
-		<label>x:</label><input type="text" id="test-input-x" value="0" />
-		<label>y:</label><input type="text" id="test-input-y" value="0" />
-		<label>d:</label><input type="text" id="test-input-d" value="10" />
-		<input type="submit" value="move eyes" />
+	<form id="random-form">
+		<label>color:</label><input type="text" id="random-color" value="bubble" />
+		<label>max layers:</label><input type="text" id="random-max-layer" value="50" />
+		<label>number of objects to add:</label><input type="text" id="random-count" value="20" />
+		<br/>
+		<input type="submit" value="generate scene" /> <input type="button" value="clear scence" id="clear-scene" />
 	</form>
+	<form id="eye-form">
+		<input type="hidden" id="test-input-x" value="0" />
+		<input type="hidden" id="test-input-y" value="0" />
+		<label>distance between layers:</label><input type="text" id="test-input-d" value="10" />
+	</form>
+	<form id="device-orientation-form">
+		<input id="use-orientation" type="checkbox" value="yes" /> <label>use device orientation:</label>
+	</form>		
     </div> <!-- /container -->
 
     <!-- Le javascript
@@ -81,11 +100,14 @@
 		};
 		$('body').append($('<div>').attr('id','layers').css({position:'absolute','z-index':-1,top:'0px',left:'0px',width:windowSize.x+"px",height:windowSize.y+"px",'background-color': '#dedede',overflow:'hidden'}));
 		var minZindex=0;
+		var clearLayers= function() {
+			$('#layers').empty();
+		};
 		var getLayer= function(depth) {
 			var layer_id= 'layer-'+depth;
 			if(!$('#'+layer_id).length) {
 				//create the layer if it doesn't exist
-				var zIndex= -1*depth;
+				var zIndex= depth;
 				minZindex= Math.min(zIndex,minZindex);
 				$('#layers').css({'z-index':minZindex-1}).append(
 					$('<div>').addClass('layer').attr('id',layer_id).css(
@@ -93,7 +115,6 @@
 					)
 				);
 			}
-			console.log('getLayer:'+layer_id);
 			return $('#'+layer_id);
 		};
 		var addToLayer= function(content, depth, x, y) {
@@ -114,23 +135,56 @@
 		};
 		var adjustLayers= function(eye_x, eye_y,distance) {
 			$('.layer').each(function(){
-				var multiplier= $(this).css('z-index')*distance;
+				var multiplier= -1*$(this).css('z-index')*distance;
 				$(this).css({top:multiplier*eye_y, left:multiplier*eye_x});
 			});
 		};
 		window.depthLayers= {};
 		window.depthLayers.adjustLayers= adjustLayers;
 		window.depthLayers.addToLayer= addToLayer;
+		window.depthLayers.clearLayers= clearLayers;
 	})();
 	</script>
 	<script>
 		$(function() {
+			var addToLayer= function(color,layer,position) {
+				if(color == 'bubble') {
+					if(!position) {
+						position= {x: (windowSize.x/2)-(179/2), y: (windowSize.y/2)-(132/2)};
+					}
+					depthLayers.addToLayer($('<div>').css({'background-image':'url("img/bubble.png?v=3")','background-repeat':'no-repeat',width:"179px",height:"132px"}),layer,position.x,position.y);
+				}
+				else {
+					if(!position) {
+						position= {x: (windowSize.x/2)-100, y: (windowSize.y/2)-100};
+					}
+					depthLayers.addToLayer($('<div>').css({'background-color':color,width:"200px",height:"200px"}),layer,position.x,position.y);
+				}
+			};
 			$('#add-form').submit(function() {
-				var color= $('#test-input-color').val();
-				var layer= $('#test-input-layer').val();
-				depthLayers.addToLayer($('<div>').css({'background-color':color,width:"200px",height:"200px"}),layer,(windowSize.x/2)-100,(windowSize.y/2)-100);
+				addToLayer($('#test-input-color').val(),$('#test-input-layer').val());
 				return false;
 			});
+
+			var randomScene= function(max_layer, count, color) {
+				for(var i=0; i<count; i++) {
+					var position= {
+						x: Math.round(Math.random() * windowSize.x),
+						y: Math.round(Math.random() * windowSize.y)
+					};
+					var layer= Math.round(Math.random() * max_layer)+1;
+					addToLayer(color,layer,position);
+				}
+			};
+			$('#random-form').submit(function(){
+				randomScene($('#random-max-layer').val(), $('#random-count').val(), $('#random-color').val());
+				return false;
+			});
+			$('#clear-scene').click(function() {
+				depthLayers.clearLayers();
+				return false;
+			});
+
 			$('#eye-form').submit(function(){
 				var x= $('#test-input-x').val();
 				var y= $('#test-input-y').val();
@@ -138,10 +192,32 @@
 				depthLayers.adjustLayers(x,y,distance);
 				return false;
 			});
-			$(document).bind('mousemove', function(e) {
-				$('#test-input-x').val(e.pageX/windowSize.x-0.5);
-				$('#test-input-y').val(e.pageY/windowSize.y-0.5);
+			
+			var handleOrientationEvent = function( frontToBack, leftToRight, rotateDegrees ){
+				$('#test-input-x').val(-1*(leftToRight-0.5));
+				$('#test-input-y').val(-1*(frontToBack-0.5));
 				$('#eye-form').submit();
+			};
+			
+			if (window.DeviceOrientationEvent) {
+				window.addEventListener("deviceorientation", function( event ) {
+					if($('#use-orientation:checked').val() == 'yes') {
+						//alpha: rotation around z-axis
+						var rotateDegrees = event.alpha;
+						//gamma: left to right
+						var leftToRight = event.gamma;
+						//beta: front back motion
+						var frontToBack = event.beta;			 
+						handleOrientationEvent( frontToBack, leftToRight, rotateDegrees );
+					}
+				}, false);
+			}
+			$(document).bind('mousemove', function(e) {
+				if($('#use-orientation:checked').val() != 'yes') {
+					$('#test-input-x').val(e.pageX/windowSize.x-0.5);
+					$('#test-input-y').val(e.pageY/windowSize.y-0.5);
+					$('#eye-form').submit();
+				}
 			});
 		});
 	</script>
