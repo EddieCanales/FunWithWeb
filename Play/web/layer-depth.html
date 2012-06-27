@@ -36,6 +36,19 @@
 			float:left;
 		}
 	</style>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24517185-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
   </head>
 
   <body>
@@ -48,11 +61,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Fun With Web</a>
+          <a class="brand" href="index.html">Fun With Web</a>
           <div class="nav-collapse">
             <ul class="nav">
               <li><a href="index.html">Home</a></li>
 		<li class="active"><a href="layer-depth.html">Layer Depth</a></li>	
+		<li><a href="places.html">Places API</a></li>	
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -98,7 +112,7 @@
 			x: $(window).outerWidth(true),
 			y: $(window).outerHeight(true)
 		};
-		$('body').append($('<div>').attr('id','layers').css({position:'absolute','z-index':-1,top:'0px',left:'0px',width:windowSize.x+"px",height:windowSize.y+"px",'background-color': '#dedede',overflow:'hidden'}));
+		$('body').append($('<div>').attr('id','layers').css({position:'absolute','z-index':-1,top:'0px',left:'0px',width:windowSize.x+"px",height:windowSize.y+"px",'background-color': 'transparent',overflow:'hidden'}));
 		var minZindex=0;
 		var clearLayers= function() {
 			$('#layers').empty();
@@ -162,7 +176,9 @@
 				}
 			};
 			$('#add-form').submit(function() {
-				addToLayer($('#test-input-color').val(),$('#test-input-layer').val());
+				var color= $('#test-input-color').val();
+				_gaq.push(['_trackEvent', 'LayerDepth', 'AddToScence', color, 1]);
+				addToLayer(color,$('#test-input-layer').val());
 				return false;
 			});
 
@@ -177,10 +193,14 @@
 				}
 			};
 			$('#random-form').submit(function(){
-				randomScene($('#random-max-layer').val(), $('#random-count').val(), $('#random-color').val());
+				var color= $('#random-color').val();
+				var count= parseInt($('#random-count').val());
+				_gaq.push(['_trackEvent', 'LayerDepth', 'GenerateScence', color, count]);
+				randomScene($('#random-max-layer').val(), count, color);
 				return false;
 			});
 			$('#clear-scene').click(function() {
+				_gaq.push(['_trackEvent', 'LayerDepth', 'ClearScence']);
 				depthLayers.clearLayers();
 				return false;
 			});
