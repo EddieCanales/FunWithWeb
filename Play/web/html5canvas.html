@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>HTML5 Canvas | Fun With Web</title>
+    <title>HTML5 Canvas Gauge | Fun With Web</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Eddie Canales">
@@ -69,8 +69,9 @@
 }
 </style>
     <div class="container">
-      <h1>HTML5 Canvas</h1>
+      <h1>HTML5 Canvas Gauge</h1>
 	<canvas id="play-canvas" width="580" height="320"></canvas>
+	<div id="animation_helper" style="display:none"></div>
     </div> <!-- /container -->
 
     <!-- Le javascript
@@ -78,69 +79,29 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery-1.7.2.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/gauge.js"></script>
 <script>
-function Gauge(conf) {
-	this.tick_length= conf.tick_length;
-	this.tick_thickness= conf.tick_thickness;
-	this.num_sub_ticks= conf.num_sub_ticks;
-	this.large_tick_scale= conf.large_tick_scale;
-	this.total_degrees= conf.total_degrees;
-	this.tick_color= conf.tick_color;
-	this.gauge_scale= conf.gauge_scale;
-	return this;
-}
-Gauge.prototype.render= function(canvas,in_context) { //canvas:required, in_context:optional
-	var context = in_context ? in_context : canvas.getContext("2d");
-	context.save(); //save original state of context to that it can be restore after rendering
-
-	//set tick color
-	context.fillStyle = this.tick_color;
-
-	//set the center of rotation to the bottom/center of the canvas
-	context.translate(canvas.width / 2, canvas.height-this.tick_thickness/2);
-
-	//set the scale of the gauge (will naturally fill the width of the canvas
-	context.scale(this.gauge_scale,this.gauge_scale);
-
-	//figure out how many degrees between each tick
-	var num_ticks= 5 + this.num_sub_ticks*4;
-	var rotation_deg= this.total_degrees/(num_ticks-1);
-
-	//adjust for smaller than 180 degree gauges
-	var starting_deg= (180-this.total_degrees)/2;
-	context.rotate(starting_deg*Math.PI/180);
-
-	//draw all of the ticks
-	for(var i=0; i<=this.total_degrees; i+=rotation_deg) {
-		//scale the ticks at 1/4 the way around gauge
-		var rect_scale= (Math.ceil(i%(this.total_degrees/4))==0 || Math.floor(i%(this.total_degrees/4))==0) ? this.large_tick_scale : 1;
-		//draw tick
-		context.fillRect(-1*(canvas.width/2), -this.tick_thickness/2, this.tick_length*rect_scale, this.tick_thickness);
-		//rotate for next tick to be placed
-		context.rotate(rotation_deg*Math.PI/180);
-	}
-
-	context.restore(); //set back to original state
-
-	return true;
-};
-
 window.onload = function() {
 	var canvas = document.getElementById("play-canvas");
 
-	window.gauge= new Gauge({
+	var gauge= new Gauge({
 		tick_length: 80,
 		tick_thickness: 6,
 		num_sub_ticks: 9,
 		large_tick_scale: 1.35,
 		total_degrees: 140,
 		tick_color: "blue",
-		gauge_scale: 0.90
+		tick_on_color: "red",
+		gauge_scale: 0.90,
+		percent: 0,
+		canvas: canvas,
+		animation_speed: 700
 	});
-	gauge.render(canvas);
-	gauge.gauge_scale= 1;
-	gauge.tick_color= "red";
-	gauge.render(canvas);
+	gauge.render();
+	gauge.updatePercent(60);
+//	gauge.gauge_scale= 1;
+//	gauge.tick_color= "red";
+//	gauge.render(canvas);
 };
 </script>
   </body>
