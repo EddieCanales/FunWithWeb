@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HTML5 Canvas | Fun With Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Eddie Canales">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <!--link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png"-->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24517185-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" hef="index.html">Fun With Web</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="index.html">Home</a></li>
+		<li><a href="layer-depth.html">Layer Depth</a></li>	
+		<li class="active"><a href="places.html">Places API</a></li>	
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+<style>
+#play-canvas {
+	border: 1px solid #9C9898;
+}
+</style>
+    <div class="container">
+      <h1>HTML5 Canvas</h1>
+	<canvas id="play-canvas" width="580" height="320"></canvas>
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery-1.7.2.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+<script>
+function Gauge(conf) {
+	this.tick_length= conf.tick_length;
+	this.tick_thickness= conf.tick_thickness;
+	this.num_sub_ticks= conf.num_sub_ticks;
+	this.large_tick_scale= conf.large_tick_scale;
+	this.total_degrees= conf.total_degrees;
+	this.tick_color= conf.tick_color;
+	this.gauge_scale= conf.gauge_scale;
+	return this;
+}
+Gauge.prototype.render= function(canvas,in_context) { //canvas:required, in_context:optional
+	var context = in_context ? in_context : canvas.getContext("2d");
+	context.save(); //save original state of context to that it can be restore after rendering
+
+	//set tick color
+	context.fillStyle = this.tick_color;
+
+	//set the center of rotation to the bottom/center of the canvas
+	context.translate(canvas.width / 2, canvas.height-this.tick_thickness/2);
+
+	//set the scale of the gauge (will naturally fill the width of the canvas
+	context.scale(this.gauge_scale,this.gauge_scale);
+
+	//figure out how many degrees between each tick
+	var num_ticks= 5 + this.num_sub_ticks*4;
+	var rotation_deg= this.total_degrees/(num_ticks-1);
+
+	//adjust for smaller than 180 degree gauges
+	var starting_deg= (180-this.total_degrees)/2;
+	context.rotate(starting_deg*Math.PI/180);
+
+	//draw all of the ticks
+	for(var i=0; i<=this.total_degrees; i+=rotation_deg) {
+		//scale the ticks at 1/4 the way around gauge
+		var rect_scale= (Math.ceil(i%(this.total_degrees/4))==0 || Math.floor(i%(this.total_degrees/4))==0) ? this.large_tick_scale : 1;
+		//draw tick
+		context.fillRect(-1*(canvas.width/2), -this.tick_thickness/2, this.tick_length*rect_scale, this.tick_thickness);
+		//rotate for next tick to be placed
+		context.rotate(rotation_deg*Math.PI/180);
+	}
+
+	context.restore(); //set back to original state
+
+	return true;
+};
+
+window.onload = function() {
+	var canvas = document.getElementById("play-canvas");
+
+	window.gauge= new Gauge({
+		tick_length: 80,
+		tick_thickness: 6,
+		num_sub_ticks: 9,
+		large_tick_scale: 1.35,
+		total_degrees: 140,
+		tick_color: "blue",
+		gauge_scale: 0.90
+	});
+	gauge.render(canvas);
+	gauge.gauge_scale= 1;
+	gauge.tick_color= "red";
+	gauge.render(canvas);
+};
+</script>
+  </body>
+</html>
