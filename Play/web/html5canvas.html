@@ -79,9 +79,10 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery-1.7.2.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/excanvas.js"></script>
     <script src="js/gauge.js"></script>
 <script>
-window.onload = function() {
+      window.onload = function() {
 	var canvas = document.getElementById("play-canvas");
 
 	var gauge= new Gauge({
@@ -90,8 +91,16 @@ window.onload = function() {
 		num_sub_ticks: 9,
 		large_tick_scale: 1.35,
 		total_degrees: 140,
-		tick_color: "blue",
-		tick_on_color: "red",
+		tick_color: "#555962",
+		tick_on_color: "#527d98",
+		tick_on_glow: 35,
+		bg_image: {
+			url: "img/fathom_logo.png",
+			width: 161,
+			height: 80,
+			xoffset: 10,
+			yoffset: 35
+		},
 		gauge_scale: 0.90,
 		percent: 0,
 		canvas: canvas,
@@ -99,9 +108,6 @@ window.onload = function() {
 	});
 	gauge.render();
 	gauge.updatePercent(60);
-//	gauge.gauge_scale= 1;
-//	gauge.tick_color= "red";
-//	gauge.render(canvas);
 };
 </script>
   </body>
