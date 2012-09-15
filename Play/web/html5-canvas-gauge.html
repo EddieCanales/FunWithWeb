@@ -145,6 +145,10 @@
 				$('.'+field+'-value').text(ui.value);
 				gauge.render();
 				output_config(gauge.getCurrentState());
+			},
+			stop: function(event, ui) {
+				console.log('logging event');
+				_gaq.push(['_trackEvent', 'CanvasGauge', 'setProperty', field, 1]);
 			}
 		});
 	};
@@ -164,6 +168,7 @@
 				gauge.updatePercent(ui.value);
 				$('.'+field+'-value').text(ui.value);
 				output_config(gauge.getCurrentState());
+				_gaq.push(['_trackEvent', 'CanvasGauge', 'setProperty', field, 1]);
 			}
 		});
 	};
