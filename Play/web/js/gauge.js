@@ -1,14 +1,3 @@
-//animation frame shim
-window.requestAnimFrame = (function(callback) {
-	return window.requestAnimationFrame || 
-		window.webkitRequestAnimationFrame || 
-		window.mozRequestAnimationFrame || 
-		window.oRequestAnimationFrame || 
-		window.msRequestAnimationFrame ||
-		function(callback) {
-			window.setTimeout(callback, 1000 / 60);
-		};
-})();
 (function(window) {
 	function Gauge(options) {
 		//set defaults
@@ -23,7 +12,7 @@ window.requestAnimFrame = (function(callback) {
 			tick_on_glow: 35,
 			bg_image: null, 
 			gauge_scale: 1,
-			animation_speed: 550
+			animation_duration: 550
 		};
 		this._property_list= Object.keys(properties);
 		//set object properties based on options and defaults
@@ -36,6 +25,21 @@ window.requestAnimFrame = (function(callback) {
 
 		return this;
 	}
+
+	Gauge.prototype._requestAnimFrame= function(f){
+		var anim= window.requestAnimationFrame
+			|| window.webkitRequestAnimationFrame
+			|| window.mozRequestAnimationFrame
+			|| window.oRequestAnimationFrame
+			|| window.msRequestAnimationFrame
+			|| function(callback, element) {
+				window.setTimeout(function() {
+					callback(+new Date);
+				}, 1000 / 60);
+			};
+		anim(f);
+	};
+
 	Gauge.prototype.getCurrentState= function() {
 		var state= {};
 		for(var i in this._property_list) {
@@ -135,25 +139,30 @@ window.requestAnimFrame = (function(callback) {
 		var _this= this;
 		this._target_percent= percent;
 
-		//TODO: add the anim helper here instead of relying on it already existing
-		if(_this.animation_speed) {
-			$('#animation_helper').stop().css({left:0}).animate(
-				{
-					left: 100
-				},
-				{
-					duration: _this.animation_speed,
-					easing: 'linear',
-					step: function(now, fx) {
-						_this._percent= (parseInt(now)/100)*percent;
-						_this.render();
-					},
-					complete: function() {
-						_this._percent= percent;
-						_this.render();
-					}
-				} 
-			);
+		if(_this.animation_duration) {
+			var duration= _this.animation_duration;
+			var lastUpdate= Date.now();
+			var start= this._percent;
+			var end= this._target_percent;
+			var change_per_ms= (end - start)/duration;
+			var increasing= change_per_ms > 0 ? 1 : 0;
+			var update= function() {
+				var now= Date.now();
+				var elapsed= now - lastUpdate;
+				_this._percent+= elapsed*change_per_ms;
+				lastUpdate= now;
+				//check if we've made it to our stopping point
+				if((increasing && _this._percent < _this._target_percent) 
+				  || (!increasing && _this._percent > _this._target_percent)) {
+					_this.render();
+					_this._requestAnimFrame(update);
+				}
+				else {
+					_this._percent= _this._target_percent;
+					_this.render();
+				}
+			};
+			_this._requestAnimFrame(update);
 		}
 		else {
 			_this._percent= percent;
