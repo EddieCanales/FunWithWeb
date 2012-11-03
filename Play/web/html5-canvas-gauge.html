@@ -74,7 +74,7 @@
 	float:left;
 	padding: 10px;
 	width: 300px;
-	min-height: 300px;
+	min-height: 377px;
 	border: 1px solid #9C9898;
 }
 #configurator label {
@@ -82,16 +82,19 @@
 	display: inline;
 	margin-right: 5px;
 }
+#configurator label.color-label {
+	display: block;
+}
 #config-output {
 	float: left;
 	width: 250px;
-	height: 312px;
+	height: 389px;
 	border: 1px solid #9C9898;
 }
 </style>
     <div class="container">
       <h1>HTML5 Canvas Gauge</h1>
-	<canvas id="play-canvas" height="320" width="580"></canvas>
+	<canvas id="play-canvas" height="397" width="580"></canvas>
 	<div id="configurator"></div>
 	<textarea id="config-output"></textarea>
     </div> <!-- /container -->
@@ -104,6 +107,7 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/excanvas.js"></script>
     <script src="js/gauge.js"></script>
+    <script src="js/jscolor/jscolor.js"></script>
 <script>
 $(function() {
 	var canvas = document.getElementById("play-canvas");
@@ -146,7 +150,6 @@ $(function() {
 				output_config(gauge.getCurrentState());
 			},
 			stop: function(event, ui) {
-				console.log('logging event');
 				_gaq.push(['_trackEvent', 'CanvasGauge', 'setProperty', field, 1]);
 			}
 		});
@@ -171,6 +174,20 @@ $(function() {
 			}
 		});
 	};
+	var update_color_field= function(field, value) {
+		gauge[field]= value;
+		gauge.render();
+		output_config(gauge.getCurrentState());
+	};
+	window.update_gauge_tick_color= function(color) {
+		update_color_field('tick_color','#'+color);
+	};
+	window.update_gauge_tick_on_color= function(color) {
+		update_color_field('tick_on_color','#'+color);
+	};
+	var create_color_picker= function(gauge, target, field, label, options) {
+		$(target).append($('<label class="color-label">').text(label+':')).append($('<input>').val(gauge[field]).addClass('color').addClass("{onImmediateChange:'update_gauge_"+field+"(this);'}"));
+	};
 
 	create_slider(gauge, "#configurator", "num_sub_ticks", "# sub-ticks", {min: 0, max: 30});
 	create_slider(gauge, "#configurator", "tick_thickness", "tick thickness", {min: 1, max: 20});
@@ -181,6 +198,8 @@ $(function() {
 	create_slider(gauge, "#configurator", "gauge_scale", "scale", {min: 0.1, max: 1, step: 0.05});
 	create_slider(gauge, "#configurator", "animation_duration", "animation duration (ms)", {min: 0, max: 3000, step:10});
 	create_percent_slider(gauge, "#configurator", "percent", "percent illuminated", {min: 0, max: 100});
+	create_color_picker(gauge, "#configurator", "tick_color", "tick color (off)");
+	create_color_picker(gauge, "#configurator", "tick_on_color", "tick color (on)");
 
 	gauge.render();
 });
