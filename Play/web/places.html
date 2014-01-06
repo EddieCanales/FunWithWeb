@@ -71,6 +71,9 @@
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
 	<label>Just start typing a company name:</label>
 	<input type="text" id="searchTextField" style="width:400px;"/>
+  <hr/>
+	<label>... or type any address/location:</label>
+	<input type="text" id="addressTextField" style="width:400px;"/>
     </div> <!-- /container -->
 
     <!-- Le javascript
@@ -85,6 +88,14 @@
 		  types: ['establishment']
 		};
 		var autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    var input2 = document.getElementById('addressTextField');
+		var options2 = {
+		  componentRestrictions: {country: 'us'},
+		  types: ['geocode']
+		};
+		var autocomplete2 = new google.maps.places.Autocomplete(input2, options2);
+
 	</script>
 
   </body>
