@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Layer Depth Demo | Fabled Web | Eddie Canales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Eddie Canales">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <!--link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png"-->
+
+	<style>
+		#add-form { /* turn off add form - replaced by generate scene */
+			display:none;
+		}
+		#use-orientation {
+			float:left;
+		}
+	</style>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24517185-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="index.html">Fabled Web</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="index.html">Home</a></li>
+		<li class="active"><a href="layer-depth.html">Layer Depth</a></li>	
+		<li><a href="html5-canvas-gauge.html">Canvas Gauge</a></li>	
+		<li><a href="places.html">Places API</a></li>	
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <h1>Layer Depth Test</h1>
+      <p>This is a test of my layers concept.</p>
+	<form id="add-form">
+		<label>color (or "bubble"):</label><input type="text" id="test-input-color" value="bubble" />
+		<label>layer (integer):</label><input type="text" id="test-input-layer" value="10" />
+		<br/>
+		<input type="submit" value="add" />
+	</form>
+	<form id="random-form">
+		<label>color:</label><input type="text" id="random-color" value="bubble" />
+		<label>max layers:</label><input type="text" id="random-max-layer" value="50" />
+		<label>number of objects to add:</label><input type="text" id="random-count" value="20" />
+		<br/>
+		<input type="submit" value="generate scene" /> <input type="button" value="clear scence" id="clear-scene" />
+	</form>
+	<form id="eye-form">
+		<input type="hidden" id="test-input-x" value="0" />
+		<input type="hidden" id="test-input-y" value="0" />
+		<label>distance between layers:</label><input type="text" id="test-input-d" value="10" />
+	</form>
+	<form id="device-orientation-form">
+		<input id="use-orientation" type="checkbox" value="yes" /> <label>use device orientation:</label>
+	</form>		
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery-1.7.2.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+	<script>
+	(function(){
+		//create layers holder
+		window.windowSize= {
+			x: $(window).outerWidth(true),
+			y: $(window).outerHeight(true)
+		};
+		$('body').append($('<div>').attr('id','layers').css({position:'absolute','z-index':-1,top:'0px',left:'0px',width:windowSize.x+"px",height:windowSize.y+"px",'background-color': 'transparent',overflow:'hidden'}));
+		var minZindex=0;
+		var clearLayers= function() {
+			$('#layers').empty();
+		};
+		var getLayer= function(depth) {
+			var layer_id= 'layer-'+depth;
+			if(!$('#'+layer_id).length) {
+				//create the layer if it doesn't exist
+				var zIndex= depth;
+				minZindex= Math.min(zIndex,minZindex);
+				$('#layers').css({'z-index':minZindex-1}).append(
+					$('<div>').addClass('layer').attr('id',layer_id).css(
+						{'z-index':zIndex,width:'100%',height:'100%',position:'absolute'}
+					)
+				);
+			}
+			return $('#'+layer_id);
+		};
+		var addToLayer= function(content, depth, x, y) {
+			var orig_w= content.width();
+			var orig_h= content.height();
+			var focal_length= 1;
+			//TODO: apply perspective
+			//content.width((1/depth)*orig_w);
+			//content.height((1/depth)*orig_h);
+			x= x + (orig_w - content.width())/2;
+			y= y + (orig_h - content.height())/2;
+
+			getLayer(depth).append(
+				$('<div>').css(
+					{position:'absolute',top:y+"px",left:x+"px"}
+				).addClass('layer-content').append(content)
+			);
+		};
+		var adjustLayers= function(eye_x, eye_y,distance) {
+			$('.layer').each(function(){
+				var multiplier= -1*$(this).css('z-index')*distance;
+				$(this).css({top:multiplier*eye_y, left:multiplier*eye_x});
+			});
+		};
+		window.depthLayers= {};
+		window.depthLayers.adjustLayers= adjustLayers;
+		window.depthLayers.addToLayer= addToLayer;
+		window.depthLayers.clearLayers= clearLayers;
+	})();
+	</script>
+	<script>
+		$(function() {
+			console.log('version: 5');
+			var calculate_layers= function(start,level) {
+				$(start).addClass('FW-layers-level-'+level);
+				$(start).children().each(function(index, value) {
+					calculate_layers($(value), level+1);
+				});
+			};
+			calculate_layers($('body'),0);
+		});
+	</script>
+  </body>
+</html>
