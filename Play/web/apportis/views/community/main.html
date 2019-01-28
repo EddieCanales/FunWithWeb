@@ -1,0 +1,38 @@
+<md-toolbar class="md-warn md-hue-1" id="community-toolbar">
+   <div class="md-toolbar-tools">Community</div>
+</md-toolbar>
+<md-content ng-if="ctrl.size.height" ng-style="{height:ctrl.size.height}">
+    <section>
+        <md-subheader class="md-primary">Events</md-subheader>
+        <md-list layout-padding>
+            <md-list-item class="md-3-line" ng-repeat="event in ctrl.events">
+                <div class="md-list-item-text">
+                    <div class="md-subhead">{{event.title}}</div>
+                    <div class="md-body-1">{{event.date | date : 'EEE, MMM d'}} at {{event.location.name}}</div>
+                    <div class="md-caption" ng-bind="event.attending ? 'You\'re Attending' : 'Sign Up'"></div>
+                </div>
+            </md-list-item>
+        </md-list>
+    </section>
+    <section>
+        <md-subheader class="md-warn">Friends</md-subheader>
+        <md-list layout-padding>
+            <md-list-item class="md-1-line" ng-repeat="friend in ctrl.friends">
+                <img ng-src="{{friend.avatar}}" class="md-avatar" alt="{{friend.name}}" />
+                <div class="md-list-item-text">
+                    <h3 class="md-subhead">{{friend.name}}</h3>
+                </div>
+            </md-list-item>
+        </md-list>
+    </section>
+    <section>
+        <md-subheader class="md-accent">Groups</md-subheader>
+        <md-list layout-padding>
+            <md-list-item class="md-1-line" ng-repeat="group in ctrl.groups">
+                <div class="md-list-item-text">
+                    <h3 class="md-subhead">{{group.name}}</h3>
+                </div>
+            </md-list-item>
+        </md-list>
+    </section>
+</md-content>

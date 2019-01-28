@@ -1,0 +1,22 @@
+<md-toolbar class="md-primary md-hue-1">
+   <div class="md-toolbar-tools text-white">Your Health Guide</div>
+</md-toolbar>
+
+<div layout="row" layout-align="top center">
+    <div flex>
+        <md-progress-circular ng-if="!ctrl.papers" style="margin:60px auto 0" class="md-accent md-hue-2" md-diameter="120" md-mode="indeterminate"></md-progress-circular>
+        <md-card ng-repeat="paper in ctrl.papers" class="slide up slide-out mtl">
+            <md-toolbar class="{{paper.categoryClass}} category-highlight"></md-toolbar>
+            <md-card-content>
+                <div class="md-caption text-muted float-left">{{ paper.pubDate | date : shortDate }}</div>
+                <div class="md-caption text-right text-muted">{{ paper.category || 'no category' }}</div>
+                <h1 class="md-subhead">{{ paper.title }}</h1>
+                <div ng-bind-html="paper.description"></div>
+            </md-card-content>
+            <div class="md-actions" layout="row" layout-align="end center">
+                <md-button ng-click="ctrl.dismiss($index)" class="text-muted">Dismiss</md-button>
+                <md-button ng-href="{{paper.link}}" target="_blank" class="md-primary">Read More</md-button>
+            </div>
+        </md-card>
+    </div>
+</div>

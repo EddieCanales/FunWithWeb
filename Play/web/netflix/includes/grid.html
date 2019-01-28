@@ -1,0 +1,15 @@
+<div class="grid">
+  <div ng-repeat="row in grid.layout" class="row">
+    <div ng-repeat="cell in row" class="grid-cell" ng-style="cell.style"></div>
+  </div>
+  <div class="row">
+    <div
+      ng-repeat="tile in grid.tiles"
+      ng-style="tile.style"
+      class="tile {{tile.bgColor}}"
+      ng-class="{'active': tile.id == activeTile.id}"
+      ng-mouseenter="activateTile(tile)"
+    ></div>
+  </div>
+</div>
+<div style="clear:both"></div>

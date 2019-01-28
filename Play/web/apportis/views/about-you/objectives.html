@@ -1,0 +1,36 @@
+
+<h1 class="md-headline">
+    Let's talk about your wellness objectives.
+</h1>
+<h1 class="md-subhead mbn">
+    What would you like to work on?
+</h1>
+<div class="inset">
+    <md-switch class="md-accent md-hue-3" ng-model="objectives.getActive" aria-label="Getting Active">
+        <md-icon md-svg-icon="run" class="fade-in" ng-class="{'fade-in-show':objectives.getActive}"></md-icon>
+        Getting Active
+    </md-switch>
+    <md-switch class="md-accent md-hue-3" ng-model="objectives.eatBetter" aria-label="Eating Better">
+        <md-icon md-svg-icon="eat" class="fade-in" ng-class="{'fade-in-show':objectives.eatBetter}"></md-icon>
+        Eating Better
+    </md-switch>
+    <md-switch class="md-accent md-hue-3" ng-model="objectives.loseWeight" aria-label="Losing Weight">
+        <md-icon md-svg-icon="loose-weight" class="fade-in" ng-class="{'fade-in-show':objectives.loseWeight}"></md-icon>
+        Losing Weight
+    </md-switch>
+    <md-switch class="md-accent md-hue-3" ng-model="objectives.sleepBetter" aria-label="Sleeping Better">
+        <md-icon md-svg-icon="sleep" class="fade-in" ng-class="{'fade-in-show':objectives.sleepBetter}"></md-icon>
+        Sleeping Better
+    </md-switch>
+    <md-switch class="md-accent md-hue-3" ng-model="objectives.reduceStress" aria-label="Reducing Stress">
+        <md-icon md-svg-icon="reduce-stress" class="fade-in" ng-class="{'fade-in-show':objectives.reduceStress}"></md-icon>
+        Reducing Stress
+    </md-switch>
+</div>
+<div class="inset">
+    <div class="fade-in" ng-class="{'fade-in-show':objectives.reduceStress||objectives.getActive||objectives.eatBetter||objectives.loseWeight||objectives.sleepBetter}">
+        <md-button ui-sref="about-you.ready" class="md-raised md-primary md-hue-1">Save &amp; Continue</md-button>
+        <br>
+        <label class="text-muted">Choose as many as you'd like.</label>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" ng-app="netflixMovingTiles" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="netflixMovingTiles" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="netflixMovingTiles" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" ng-app="netflixMovingTiles" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Eddie's Netflix Take-home Project</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/normalize.css">
+  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/main.css">
+  <link rel="stylesheet" href="app.css">
+  <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
+</head>
+<body>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <div ng-include="'includes/grid.html'" ng-controller="GridCtrl" ng-init="init(6)"></div>
+  <div ng-include="'includes/grid.html'" ng-controller="GridCtrl" ng-init="init(6)"></div>
+
+  <h4>notes</h4>
+  <ul>
+    <li>interactions between tiles only occur within each 6 x 2 grid</li>
+    <li>when hovering a bottom tile, current active moves to bottom row</li>
+    <li>when hovering a top tile, current active stays on the top row</li>
+  </ul>
+
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/underscore/underscore.js"></script>
+  <script src="app.js"></script>
+  <script src="controllers/grid.js"></script>
+</body>
+</html>

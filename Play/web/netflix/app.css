@@ -1,0 +1,40 @@
+/* app css stylesheet */
+body {
+  background-color: #000;
+  color: #bbb;
+  padding: 50px;
+}
+.grid {
+  height: 400px;
+  position: relative;
+}
+.grid-cell,.tile { /* cells and tiles start with same basic display */
+  position: absolute; /* will be posistioned by the controller */
+  height: 50%; /* 2 rows per grid */
+  box-sizing: border-box;
+  background-color: #dedede;
+  border: 1px solid #efefef;
+}
+.tile {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 0%;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+  transform-origin: 0 0;
+  z-index: 1;
+}
+.tile.active {
+  z-index: 10;
+  transform: scale(2,2);
+}
+
+
+/* define our active tile color palette */
+.tile.active.yellow  { background-color: #fdf002; }
+.tile.active.red     { background-color: #ec155c; }
+.tile.active.blue    { background-color: #0154a7; }
+.tile.active.ltblue  { background-color: #0cb9fd; }
+.tile.active.green   { background-color: #39b54a; }
+.tile.active.orange  { background-color: #ff5203; }
+
