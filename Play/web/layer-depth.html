@@ -162,12 +162,13 @@
 	</script>
 	<script>
 		$(function() {
-			var addToLayer= function(color,layer,position) {
+			var addToLayer= function(color,layer,position,max_layer) {
 				if(color == 'bubble') {
 					if(!position) {
 						position= {x: (windowSize.x/2)-(179/2), y: (windowSize.y/2)-(132/2)};
 					}
-					depthLayers.addToLayer($('<div>').css({'background-image':'url("img/bubble.png?v=3")','background-repeat':'no-repeat',width:"179px",height:"132px"}),layer,position.x,position.y);
+          var zoom = layer/max_layer;
+					depthLayers.addToLayer($('<div>').css({'background-image':'url("img/bubble.png?v=3")','background-repeat':'no-repeat','background-size':'contain',width:(179*zoom)+"px",height:(132*zoom)+"px"}),layer,position.x,position.y);
 				}
 				else {
 					if(!position) {
@@ -190,7 +191,7 @@
 						y: Math.round(Math.random() * windowSize.y)
 					};
 					var layer= Math.round(Math.random() * max_layer)+1;
-					addToLayer(color,layer,position);
+					addToLayer(color,layer,position,max_layer);
 				}
 			};
 			$('#random-form').submit(function(){
